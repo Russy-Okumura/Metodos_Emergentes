@@ -418,4 +418,3 @@ class _FilaDato extends StatelessWidget {
     );
   }
 }
-

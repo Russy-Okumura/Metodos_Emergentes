@@ -35,3 +35,4 @@ Este repositorio tiene el objetivo de documentar un control de actividades reali
 
 - QA
     - Navarrete Escalante Armin
+
