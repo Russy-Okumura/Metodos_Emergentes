@@ -10,19 +10,17 @@ class AdminLoginPage extends StatefulWidget {
 }
 
 class _AdminLoginPageState extends State<AdminLoginPage> {
-
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
   Future<void> _signIn() async {
-
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) return;
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty)
+      return;
 
     setState(() => _isLoading = true);
 
     try {
-
       await Supabase.instance.client.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -34,13 +32,10 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
           MaterialPageRoute(builder: (_) => const AdminDashboardPage()),
         );
       }
-
     } catch (e) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Error al iniciar sesión"))
-      );
-
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Error al iniciar sesión")));
     }
 
     setState(() => _isLoading = false);
@@ -48,24 +43,16 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       body: Stack(
         children: [
-
           /// IMAGEN DE FONDO
           SizedBox.expand(
-            child: Image.asset(
-              "images/fondo.jpg",
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset("images/fondo.jpg", fit: BoxFit.cover),
           ),
 
           /// CAPA OSCURA PARA BAJAR BRILLO
-          Container(
-            color: Colors.black.withOpacity(0.6),
-          ),
+          Container(color: Colors.black.withOpacity(0.6)),
 
           /// CONTENIDO
           Center(
@@ -85,7 +72,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-
                     const Icon(
                       Icons.lock_person,
                       size: 70,
@@ -136,7 +122,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       height: 55,
 
                       child: ElevatedButton(
-
                         onPressed: _isLoading ? null : _signIn,
 
                         style: ElevatedButton.styleFrom(
@@ -148,20 +133,20 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                         ),
 
                         child: _isLoading
-                          ? const CircularProgressIndicator(color: Colors.black)
-                          : const Text(
-                              "ACCEDER",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                            ? const CircularProgressIndicator(
+                                color: Colors.black,
+                              )
+                            : const Text(
+                                "ACCEDER",
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                            ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
