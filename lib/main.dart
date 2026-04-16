@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'pages/admin/registro_web.dart';
 import 'pages/guard/escaner_page.dart';
 import 'pages/admin/admin_login_page.dart';
 import 'pages/student/student_auth_page.dart';
