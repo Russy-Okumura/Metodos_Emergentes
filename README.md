@@ -36,3 +36,30 @@ Este repositorio tiene el objetivo de documentar un control de actividades reali
 - QA
     - Navarrete Escalante Armin
 
+
+  ## Avances Realizados 
+
+### Modulo de inicio de sesion con diseño implementado 
+
+Descripción:
+Este módulo implementa el maquetado del inicio de sesión del sistema de control de acceso vehicular.
+Permite a los administradores ingresar mediante correo y contraseña para acceder al panel principal
+
+Mejora futura:
+Se reemplazará el correo por 'Número de control'
+
+### Base de Datos creadas
+
+se realizo conexión con base de datos temporal 
+falta la conexion de base de datos actual, creada en supabase
+se trabaja en la creacion de tablas para la base de datos de produccion.
+
+### Dahsword
+
+## Admin
+
+El administrador puede modificar ya sea si el usuario cambia de vehiculo, placas, , elimniar y agregar usuarios.
+
+## seguridad
+
+Escaneo y muestreo de información del usuario.
