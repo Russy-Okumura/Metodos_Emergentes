@@ -11,7 +11,6 @@ class AdminLoginPage extends StatefulWidget {
 }
 
 class _AdminLoginPageState extends State<AdminLoginPage> {
-
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -21,13 +20,12 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   bool _isLoading = false;
 
   Future<void> _signIn() async {
-
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) return;
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty)
+      return;
 
     setState(() => _isLoading = true);
 
     try {
-
       await Supabase.instance.client.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -39,12 +37,10 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
           MaterialPageRoute(builder: (_) => const AdminDashboardPage()),
         );
       }
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Error al iniciar sesión"))
       );
-    }
 
     setState(() => _isLoading = false);
   }
@@ -79,23 +75,16 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Stack(
         children: [
-
-          /// 🌄 FONDO
+          /// IMAGEN DE FONDO
           SizedBox.expand(
-            child: Image.asset(
-              "images/fondo.jpg",
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset("images/fondo.jpg", fit: BoxFit.cover),
           ),
 
-          /// 🌑 OVERLAY
-          Container(
-            color: const Color(0xFF0D1B2A).withOpacity(0.7),
-          ),
+          /// CAPA OSCURA PARA BAJAR BRILLO
+          Container(color: Colors.black.withOpacity(0.6)),
 
           /// 👉 FORMULARIO DERECHA
           Align(
@@ -113,9 +102,19 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
-                      const Text("Idioma", style: TextStyle(color: Colors.white70)),
-                      const SizedBox(height: 5),
-                      _buildDropdown(["Español", "Inglés"], "Español"),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.95),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.lock_person,
+                      size: 70,
+                      color: Color(0xFF1A73E8),
+                    ),
 
                       const SizedBox(height: 20),
 
@@ -131,11 +130,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
                       const SizedBox(height: 20),
 
-                      const Text("Perfil", style: TextStyle(color: Colors.white70)),
-                      const SizedBox(height: 5),
-                      _buildDropdown(["Alumno", "Seguridad", "Administrador"], _perfil),
-
-                      const SizedBox(height: 20),
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _signIn,
 
                       /// 🔗 RECUPERAR CONTRASEÑA
                       Align(
@@ -152,77 +148,22 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 25),
-
-                      /// 🔘 BOTÓN
-                      SizedBox(
-                        width: 140,
-                        height: 45,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _signIn,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 93, 180, 235),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                          ),
-                          child: _isLoading
-                          
-                              ? const CircularProgressIndicator(color: Colors.black)
-                              : const Text("Ingresar", 
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.black,
+                              )
+                            : const Text(
+                                "ACCEDER",
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                        ),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-          )
+          ),
         ],
-      ),
-    );
-  }
-
-  /// 🔹 INPUT
-  Widget _buildInput(TextEditingController controller, IconData icon, {bool isPassword = false}) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword,
-      style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.black54),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.85),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  /// 🔹 DROPDOWN
-  Widget _buildDropdown(List<String> items, String value) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.85),
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: DropdownButton<String>(
-        value: value,
-        isExpanded: true,
-        underline: const SizedBox(),
-        items: items.map((item) {
-          return DropdownMenuItem(value: item, child: Text(item));
-        }).toList(),
-        onChanged: (val) {
-          setState(() => _perfil = val!);
-        },
       ),
     );
   }
