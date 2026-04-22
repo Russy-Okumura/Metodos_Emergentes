@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'pages/guard/escaner.dart';
 import 'pages/admin/admin_login_page.dart';
-import 'pages/student/student_auth_page.dart'
+import 'pages/student/student_auth_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
