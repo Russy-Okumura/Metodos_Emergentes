@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'admin_dashboard_page.dart';
@@ -12,6 +13,10 @@ class AdminLoginPage extends StatefulWidget {
 class _AdminLoginPageState extends State<AdminLoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  String _rol = "usuario";
+  String _perfil = "Alumno";
+
   bool _isLoading = false;
 
   Future<void> _signIn() async {
@@ -33,12 +38,39 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Error al iniciar sesión")));
-    }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error al iniciar sesión"))
+      );
 
     setState(() => _isLoading = false);
+  }
+
+    /// 🔐 RECUPERAR CONTRASEÑA
+  Future<void> _recoverPassword() async {
+
+    if (_emailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ingresa tu correo primero"))
+      );
+      return;
+    }
+
+    try {
+
+      await Supabase.instance.client.auth.resetPasswordForEmail(
+        _emailController.text.trim(),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Correo de recuperación enviado"))
+      );
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error al enviar recuperación"))
+      );
+    }
   }
 
   @override
@@ -54,15 +86,21 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
           /// CAPA OSCURA PARA BAJAR BRILLO
           Container(color: Colors.black.withOpacity(0.6)),
 
-          /// CONTENIDO
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(30),
+          /// 👉 FORMULARIO DERECHA
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 80),
 
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 420),
+              child: SingleChildScrollView(
+                child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 420, // 🔥 CLAVE PARA QUE NO OCUPE TODO
+                  ),
 
-                padding: const EdgeInsets.all(30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
 
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.95),
@@ -78,59 +116,37 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       color: Color(0xFF1A73E8),
                     ),
 
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                    const Text(
-                      "Panel Administrador",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                      const Text("Usuario", style: TextStyle(color: Colors.white70)),
+                      const SizedBox(height: 5),
+                      _buildInput(_emailController, Icons.person),
 
-                    const SizedBox(height: 30),
+                      const SizedBox(height: 20),
 
-                    TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: "Correo",
-                        prefixIcon: const Icon(Icons.email),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
+                      const Text("Contraseña", style: TextStyle(color: Colors.white70)),
+                      const SizedBox(height: 5),
+                      _buildInput(_passwordController, Icons.lock, isPassword: true),
 
-                    const SizedBox(height: 20),
-
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: "Contraseña",
-                        prefixIcon: const Icon(Icons.lock),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 55,
+                      const SizedBox(height: 20),
 
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _signIn,
 
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFD600),
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      /// 🔗 RECUPERAR CONTRASEÑA
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: _recoverPassword,
+                          child: const Text(
+                            "¿Olvidaste tu contraseña?",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
+                      ),
 
                         child: _isLoading
                             ? const CircularProgressIndicator(
@@ -141,8 +157,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
