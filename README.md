@@ -37,7 +37,7 @@ Este repositorio tiene el objetivo de documentar un control de actividades reali
     - Navarrete Escalante Armin
 
 
-  ## Avances Realizados 
+## Avances Realizados 
 
 ### Modulo de inicio de sesion con diseño implementado 
 
@@ -56,10 +56,22 @@ se trabaja en la creacion de tablas para la base de datos de produccion.
 
 ### Dahsword
 
-## Admin
+### Admin
 
 El administrador puede modificar ya sea si el usuario cambia de vehiculo, placas, , elimniar y agregar usuarios.
 
-## seguridad
+### seguridad
 
 Escaneo y muestreo de información del usuario.
+
+## Avances: Avances realizados hasta el dia 27/04/2026
+
+### Base de datos 
+
+Se realizo la creación de la base de datos de producción con tablas y campos definidos para 
+la escalabilidad.
+
+### Inicio de sesion 
+
+-Se implemento un inicio de sesion junto con el diseño propuesto
+-Se realizo la conexion con el inicio de sesion y el registro funcional lo que ya permite interactuar con la base de datos.
