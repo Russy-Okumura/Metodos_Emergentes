@@ -10,9 +10,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://pzrslgqjrqjqjpbeoogy.supabase.co',
+    url: 'https://eaklvoonrjiumkyycajx.supabase.co',
     anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cnNsZ3FqcnFqcWpwYmVvb2d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NDU4NDAsImV4cCI6MjA4MTIyMTg0MH0.tGSF_ryWwY3v9KwefckRzXR0HrSJYyPFD41P4d00LK4',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVha2x2b29ucmppdW1reXljYWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNTE0NTUsImV4cCI6MjA4NzcyNzQ1NX0.0TWJL-9KpvCpY4cIBL59a3nOZUpW7Bs_L15VG39yDFg',
   );
 
   runApp(const MyApp());
@@ -149,6 +149,25 @@ class _MenuCard extends StatelessWidget {
     required this.textColor,
     required this.onTap,
   });
+  Future<void> registrarUsuario(
+    String usuario,
+    String password,
+    String perfil,
+  ) async {
+    try {
+      final supabase = Supabase.instance.client;
+
+      await supabase.from('users').insert({
+        'usuario': usuario,
+        'password': password,
+        'perfil': perfil,
+      });
+
+      print("Usuario registrado");
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
