@@ -14,7 +14,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  String _perfil = "Alumno";
+  String _perfil = "Administrador";
   bool _isLoading = false;
 
   // 🔐 LOGIN
@@ -31,59 +31,63 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     try {
       final supabase = Supabase.instance.client;
 
-      final response = await supabase
-          .from('users')
-          .select()
-          .eq('usuario', _emailController.text.trim())
-          .eq('password', _passwordController.text.trim())
-          .maybeSingle();
+      final response = await supabase.auth.signInWithPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
-      if (response != null) {
+      if (response.user != null) {
         if (mounted) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const AdminDashboardPage()),
           );
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Usuario o contraseña incorrectos")),
-        );
       }
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Error de conexión con la base de datos")),
+        const SnackBar(content: Text("Error al conectar con Supabase")),
       );
     }
 
     setState(() => _isLoading = false);
   }
 
-  // 🆕 REGISTRAR USUARIO
-  Future<void> _registrarUsuario() async {
+  // 🆕 REGISTRAR NUEVO USUARIO
+  Future<void> _registerUser() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Completa los campos")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Completa todos los campos")),
+      );
       return;
     }
 
     try {
       final supabase = Supabase.instance.client;
 
-      await supabase.from('users').insert({
-        'usuario': _emailController.text.trim(),
-        'password': _passwordController.text.trim(),
-        'perfil': _perfil,
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Usuario creado correctamente")),
+      final response = await supabase.auth.signUp(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        data: {'perfil': _perfil},
       );
-    } catch (e) {
+
+      if (response.user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Usuario creado correctamente")),
+        );
+      }
+    } on AuthException catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Error al crear usuario")));
+      ).showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error al registrar usuario")),
+      );
     }
   }
 
@@ -92,12 +96,15 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     return Scaffold(
       body: Stack(
         children: [
+          // 🌄 FONDO
           SizedBox.expand(
             child: Image.asset("images/fondo.jpg", fit: BoxFit.cover),
           ),
 
+          // 🌑 OSCURECER FONDO
           Container(color: const Color(0xFF0D1B2A).withOpacity(0.7)),
 
+          // 📦 LOGIN BOX
           Align(
             alignment: Alignment.centerRight,
             child: Padding(
@@ -112,11 +119,14 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
                     child: Container(
                       constraints: const BoxConstraints(maxWidth: 420),
+
                       padding: const EdgeInsets.all(25),
 
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15),
+
                         borderRadius: BorderRadius.circular(16),
+
                         border: Border.all(
                           color: Colors.white.withOpacity(0.2),
                         ),
@@ -124,6 +134,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+
                         children: [
                           const Icon(
                             Icons.lock_person,
@@ -133,14 +144,26 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
                           const SizedBox(height: 20),
 
-                          const Text("Usuario"),
+                          // 📧 EMAIL
+                          const Text(
+                            "Correo Electrónico",
+                            style: TextStyle(color: Colors.white),
+                          ),
+
                           const SizedBox(height: 5),
-                          _buildInput(_emailController, Icons.person),
+
+                          _buildInput(_emailController, Icons.email),
 
                           const SizedBox(height: 20),
 
-                          const Text("Contraseña"),
+                          // 🔑 PASSWORD
+                          const Text(
+                            "Contraseña",
+                            style: TextStyle(color: Colors.white),
+                          ),
+
                           const SizedBox(height: 5),
+
                           _buildInput(
                             _passwordController,
                             Icons.lock,
@@ -149,42 +172,77 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
                           const SizedBox(height: 20),
 
-                          const Text("Perfil"),
+                          // 👤 PERFIL
+                          const Text(
+                            "Perfil",
+                            style: TextStyle(color: Colors.white),
+                          ),
+
                           const SizedBox(height: 5),
+
                           _buildDropdown([
+                            "Administrador",
                             "Alumno",
                             "Seguridad",
-                            "Administrador",
                           ], _perfil),
 
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 30),
 
-                          /// 🔐 BOTÓN LOGIN
+                          // 🔐 LOGIN BUTTON
                           SizedBox(
                             width: double.infinity,
                             height: 50,
+
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _signIn,
+
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: const Color(0xFF1A3C88),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+
                               child: _isLoading
                                   ? const CircularProgressIndicator()
-                                  : const Text("Ingresar"),
+                                  : const Text(
+                                      "Ingresar",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                             ),
                           ),
 
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 15),
 
-                          /// 🆕 BOTÓN REGISTRO
+                          /*// 🆕 NUEVO USUARIO
                           SizedBox(
                             width: double.infinity,
                             height: 50,
+
                             child: ElevatedButton(
-                              onPressed: _registrarUsuario,
+                              onPressed: _registerUser,
+
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
                               ),
-                              child: const Text("Nuevo Usuario"),
+
+                              child: const Text(
+                                "Nuevo Usuario",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+                          ),*/
                         ],
                       ),
                     ),
@@ -198,6 +256,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     );
   }
 
+  // 🔤 INPUTS
   Widget _buildInput(
     TextEditingController controller,
     IconData icon, {
@@ -206,10 +265,15 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     return TextField(
       controller: controller,
       obscureText: isPassword,
+
+      style: const TextStyle(color: Colors.white),
+
       decoration: InputDecoration(
-        prefixIcon: Icon(icon),
+        prefixIcon: Icon(icon, color: Colors.white70),
+
         filled: true,
         fillColor: Colors.white.withOpacity(0.2),
+
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),
           borderSide: BorderSide.none,
@@ -218,20 +282,30 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     );
   }
 
+  // 🔽 DROPDOWN
   Widget _buildDropdown(List<String> items, String value) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
+
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(25),
       ),
+
       child: DropdownButton<String>(
         value: value,
         isExpanded: true,
+
+        dropdownColor: const Color(0xFF1B263B),
+
+        style: const TextStyle(color: Colors.white),
+
         underline: const SizedBox(),
+
         items: items.map((item) {
           return DropdownMenuItem(value: item, child: Text(item));
         }).toList(),
+
         onChanged: (val) {
           setState(() => _perfil = val!);
         },
