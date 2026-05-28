@@ -75,3 +75,8 @@ la escalabilidad.
 
 -Se implemento un inicio de sesion junto con el diseño propuesto
 -Se realizo la conexion con el inicio de sesion y el registro funcional lo que ya permite interactuar con la base de datos.
+
+
+## Link del Video de la reunion
+
+https://mega.nz/file/fcwyxbQD#oqTckW7Ui08QW_deK76cxufM0jV7N9kq9dgeqZiYFXE
