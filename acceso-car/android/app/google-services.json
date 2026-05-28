@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "87026261140",
+    "project_id": "control-de-acceso-78bec",
+    "storage_bucket": "control-de-acceso-78bec.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87026261140:android:b23691f3c0f5f376caa881",
+        "android_client_info": {
+          "package_name": "com.example.flutter_control_acceso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALQZ7dk--00qh-eaQ06IGXDTdRfeBooIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
